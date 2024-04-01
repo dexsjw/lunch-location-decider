@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Arrays;
 import java.util.List;
 
 @NoArgsConstructor
@@ -34,8 +35,31 @@ public class LunchSession {
     @Transient
     private List<String> restaurantsList;
 
-    public String generateRestaurantsString(List<String> restaurantsList) {
-        return String.join(",", restaurantsList);
+    public static List<String> generateRestaurantsList(String restaurants) {
+        return Arrays.asList(restaurants.split(","));
+    }
+
+//    public static LunchSession checkActiveStatus(LunchSession lunchSession) {
+//        if (!lunchSession.isActiveStatus()) {
+//            lunchSession.setRestaurants("Error: Session has ended.");
+//        }
+//        return lunchSession;
+//    }
+//
+//    public static String generateRestaurantsString(List<String> restaurantsList) {
+//        return String.join(",", restaurantsList);
+//    }
+
+    @Override
+    public String toString() {
+        return "LunchSession{" +
+                "id=" + id + "\n" +
+                ", ownerCode='" + ownerCode + "'\n" +
+                ", roomCode='" + roomCode + "'\n" +
+                ", activeStatus=" + activeStatus + "\n" +
+                ", restaurants='" + restaurants + "'\n" +
+                ", restaurantsList=" + restaurantsList + "\n" +
+                '}';
     }
 
 }
