@@ -18,7 +18,7 @@ GO
 
 -- Create the table in the specified schema
 CREATE TABLE dbo.lunch_session (
-    id BIGINT NOT NULL PRIMARY KEY, -- primary key column
+    id BIGINT NOT NULL PRIMARY KEY IDENTITY, -- primary key column
     owner_code VARCHAR(50) NOT NULL UNIQUE,
     room_code VARCHAR(50) NOT NULL UNIQUE,
     active_status BIT NOT NULL,
@@ -29,10 +29,10 @@ GO
 -- OPTIONAL STEP
 -- Insert sample rows into table 'lunch_session'
 INSERT INTO dbo.lunch_session
-   ([id],[owner_code],[room_code],[active_status],[restaurants])
+   ([owner_code],[room_code],[active_status],[restaurants])
 VALUES
-   ( 1, 'e58ed763_e58ed763-928c-4155-bee9-fdbaaadc15f3', 'e58ed763-928c-4155-bee9-fdbaaadc15f3', 'true', ''),
-   ( 2, 'e58ed764_e58ed763-928c-4155-bee9-fdbaaadc15f4', 'e58ed763-928c-4155-bee9-fdbaaadc15f4', 'true', 'Macs,KFC,Kopitiam'),
-   ( 3, 'e58ed765_e58ed763-928c-4155-bee9-fdbaaadc15f5', 'e58ed763-928c-4155-bee9-fdbaaadc15f5', 'false', ''),
-   ( 4, 'e58ed766_e58ed763-928c-4155-bee9-fdbaaadc15f6', 'e58ed763-928c-4155-bee9-fdbaaadc15f6', 'false', 'Macs,KFC,Kopitiam')
+   ('e58ed763_e58ed763-928c-4155-bee9-fdbaaadc15f3', 'e58ed763-928c-4155-bee9-fdbaaadc15f3', 'true', ''),
+   ('e58ed764_e58ed763-928c-4155-bee9-fdbaaadc15f4', 'e58ed763-928c-4155-bee9-fdbaaadc15f4', 'true', 'Macs,KFC,Kopitiam'),
+   ('e58ed765_e58ed763-928c-4155-bee9-fdbaaadc15f5', 'e58ed763-928c-4155-bee9-fdbaaadc15f5', 'false', ''),
+   ('e58ed766_e58ed763-928c-4155-bee9-fdbaaadc15f6', 'e58ed763-928c-4155-bee9-fdbaaadc15f6', 'false', 'Macs,KFC,Kopitiam')
 GO
