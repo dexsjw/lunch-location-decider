@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: lunch-location-decider
+  datasource:
+#    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:sqlserver://localhost:1433;encrypt=true;trustServerCertificate=true;databaseName=lunch_location_decider
+    username: Dexter
+    password: P@ssw0rd
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.SQLServerDialect
+      ddl-auto: update
