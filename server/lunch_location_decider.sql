@@ -19,8 +19,8 @@ GO
 -- Create the table in the specified schema
 CREATE TABLE dbo.lunch_session (
     id BIGINT NOT NULL PRIMARY KEY, -- primary key column
-    owner_code VARCHAR(50) NOT NULL,
-    room_code VARCHAR(50) NOT NULL,
+    owner_code VARCHAR(50) NOT NULL UNIQUE,
+    room_code VARCHAR(50) NOT NULL UNIQUE,
     active_status BIT NOT NULL,
 	restaurants NVARCHAR(MAX) NULL
 )
