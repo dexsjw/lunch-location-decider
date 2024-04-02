@@ -35,6 +35,18 @@ export class LunchSessionService {
     }
   }
 
+  deleteLunchSessionOwnerCodeLocally(ownerCode: string) {
+    let ownerCodeObj: {[key: string]: string} = {};
+
+    const ownerCodeMapString: string = localStorage.getItem(this.LUNCH_SESSION_OWNER_CODE) ?? "";
+    if (ownerCodeMapString !== null && ownerCodeMapString.length > 0) {
+      ownerCodeObj = JSON.parse(ownerCodeMapString);
+    }
+
+    delete ownerCodeObj[ownerCode];
+    localStorage.setItem(this.LUNCH_SESSION_OWNER_CODE, JSON.stringify(ownerCodeObj));
+  }
+
   newLunchSession(lunchSession: LunchSession): Promise<LunchSession> {
     return lastValueFrom(
       this.httpClient.post<LunchSession>(this.BASE_URL + '/new', lunchSession)
