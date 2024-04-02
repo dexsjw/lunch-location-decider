@@ -1,0 +1,41 @@
+<section class="btm-margin">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                Create a new lunch session?
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-actions>
+            <button mat-stroked-button
+                color="primary"
+                (click)="createNewLunchSession()">
+                Create
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</section>
+
+<section class="btm-margin">
+    <mat-card>
+        <mat-card-header class="btm-margin">
+            <mat-card-title>
+                Join an existing lunch session?
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div>
+                <mat-form-field>
+                    <mat-label>Join a room with code:</mat-label>
+                    <input matInput 
+                        placeholder="Room Code">
+                </mat-form-field>
+            </div>
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-stroked-button
+                color="primary">
+                Join
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</section>
