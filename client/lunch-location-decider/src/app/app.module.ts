@@ -9,18 +9,23 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { MainComponent } from './main/main.component';
 import { RoomComponent } from './room/room.component';
 import { SummaryComponent } from './summary/summary.component';
+import { DialogNoSessionComponent } from './dialog-no-session/dialog-no-session.component';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
     AppComponent,
     MainComponent,
     RoomComponent,
-    SummaryComponent
+    SummaryComponent,
+    DialogNoSessionComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +36,10 @@ import { MatInputModule } from '@angular/material/input';
     MatCardModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatDialogModule,
+    MatTableModule,
+    MatIconModule
   ],
   providers: [
     provideAnimationsAsync()
