@@ -41,7 +41,12 @@ export class RoomComponent implements OnInit {
 
   refreshTable() {
     this.lunchSessionSvc.findLunchSession(this.lunchSessionForm.value)
-      .then(lunchSession => this.dataSource = lunchSession.restaurantsList ?? [])
+      .then(lunchSession => {
+        if (!lunchSession.activeStatus) {
+          this.router.navigate(['/summary', lunchSession.roomCode]);
+        }
+        this.dataSource = lunchSession.restaurantsList ?? [];
+      })
       .catch(err => console.error(err));
   }
 
