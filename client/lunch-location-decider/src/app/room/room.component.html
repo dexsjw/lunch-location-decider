@@ -1,1 +1,66 @@
-<p>room works!</p>
+<form [formGroup]="lunchSessionForm"
+    (ngSubmit)="submitRestaurantName()">
+    <button mat-stroked-button
+        type="button"
+        color="primary"
+        (click)="navigateBackToMain()">
+        Back
+    </button>
+
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title class="margin-around">
+                Room Code: {{ lunchSessionForm.value.roomCode }}
+            </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+            <section>
+                <mat-form-field class="margin-around">
+                    <mat-label>Add a restaurant</mat-label>
+                    <input matInput 
+                        placeholder="Restaurant Name"
+                        formControlName="restaurants">
+                </mat-form-field>
+                <button mat-stroked-button
+                    type="submit"
+                    color="primary">
+                    Submit
+                </button>
+            </section>
+
+            <section>
+                <button mat-fab
+                    class="margin-around"
+                    type="button"
+                    color="accent"
+                    (click)="refreshTable()">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+            </section>
+
+            <section>
+                <table mat-table [dataSource]="dataSource">
+                    <ng-container matColumnDef="restaurants">
+                        <th mat-header-cell *matHeaderCellDef>List of Restaurants</th>
+                        <td mat-cell *matCellDef="let restaurants"> {{ restaurants }} </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+            </section>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+            <ng-container *ngIf="hasOwnerCode">
+                <button mat-stroked-button
+                    type="button"
+                    color="primary"
+                    (click)="endLunchSession()">
+                    End Session
+                </button>
+            </ng-container>
+        </mat-card-actions>
+    </mat-card>
+</form>
