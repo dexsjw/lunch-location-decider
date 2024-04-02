@@ -7,8 +7,8 @@ import { SummaryComponent } from './summary/summary.component';
 const routes: Routes = [
   { path: '', redirectTo: 'main', pathMatch: 'full'},
   { path: 'main', component: MainComponent },
-  { path: 'room/:ownerCode', component: RoomComponent },
-  { path: 'summary/:roomCode', component: SummaryComponent },
+  { path: 'room', component: RoomComponent },
+  { path: 'summary', component: SummaryComponent },
   { path: '**', redirectTo: '/', pathMatch: 'full' }
 ];
 
