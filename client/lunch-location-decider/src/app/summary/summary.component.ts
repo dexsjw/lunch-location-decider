@@ -26,10 +26,7 @@ export class SummaryComponent implements OnInit {
 
   ngOnInit(): void {
     this.lunchSessionSvc.findLunchSession(this.lunchSession)
-      .then(lunchSession => {
-        console.info(lunchSession);
-        this.restaurant = lunchSession.restaurants ?? "N.A."
-      })
+      .then(lunchSession => this.restaurant = lunchSession.restaurants ?? "N.A.")
       .catch(err => console.error(err));
   }
 
