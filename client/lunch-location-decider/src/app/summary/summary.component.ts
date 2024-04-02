@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LunchSessionService } from '../service/lunch-session.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { LunchSession } from '../models/lunch-session';
+import { Router } from '@angular/router';
+import { DataService } from '../service/data.service';
 
 @Component({
   selector: 'app-summary',
@@ -10,24 +10,14 @@ import { LunchSession } from '../models/lunch-session';
 })
 export class SummaryComponent implements OnInit {
 
-  roomCode: string = this.activatedRoute.snapshot.params['roomCode'];
+  roomCode: string = "";
   restaurant: string = "";
 
-  lunchSession: LunchSession = {
-    id: 0,
-    ownerCode: "",
-    roomCode: this.roomCode,
-    activeStatus: false,
-    restaurants: "",
-    restaurantsList: []
-  }
-
-  constructor(private activatedRoute: ActivatedRoute, private lunchSessionSvc: LunchSessionService, private router: Router) {}
+  constructor(private dataSvc: DataService, private lunchSessionSvc: LunchSessionService, private router: Router) {}
 
   ngOnInit(): void {
-    this.lunchSessionSvc.findLunchSession(this.lunchSession)
-      .then(lunchSession => this.restaurant = lunchSession.restaurants ?? "N.A.")
-      .catch(err => console.error(err));
+    this.roomCode = this.dataSvc.lunchSession.roomCode;
+    this.restaurant = this.dataSvc.lunchSession.restaurants ?? "N.A.";
   }
 
   navigateBackToMain() {

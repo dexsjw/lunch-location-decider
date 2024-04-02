@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LunchSession } from '../models/lunch-session';
 import { lastValueFrom } from 'rxjs';
@@ -12,40 +12,6 @@ export class LunchSessionService {
   BASE_URL: string = "/lunch/session";
 
   constructor(private httpClient: HttpClient) { }
-
-  saveLunchSessionOwnerCodeLocally(ownerCode: string) {
-    let ownerCodeObj: {[key: string]: string} = {};
-
-    const ownerCodeMapString: string = localStorage.getItem(this.LUNCH_SESSION_OWNER_CODE) ?? "";
-    if (ownerCodeMapString !== null && ownerCodeMapString.length > 0) {
-      ownerCodeObj = JSON.parse(ownerCodeMapString);
-    } 
-
-    ownerCodeObj[ownerCode] = ownerCode;
-    localStorage.setItem(this.LUNCH_SESSION_OWNER_CODE, JSON.stringify(ownerCodeObj));
-  }
-
-  hasLunchSessionOwnerCodeLocally(ownerCode: string): boolean {
-    const ownerCodeObjString: string = localStorage.getItem(this.LUNCH_SESSION_OWNER_CODE) ?? "";
-    if (ownerCodeObjString === null || ownerCodeObjString.length <= 0) {
-      return false;
-    } else {
-      let ownerCodeObj: {[key: string]: string} = JSON.parse(ownerCodeObjString);
-      return (ownerCodeObj[ownerCode] !== null && ownerCodeObj[ownerCode] !== "") ? true : false;
-    }
-  }
-
-  deleteLunchSessionOwnerCodeLocally(ownerCode: string) {
-    let ownerCodeObj: {[key: string]: string} = {};
-
-    const ownerCodeMapString: string = localStorage.getItem(this.LUNCH_SESSION_OWNER_CODE) ?? "";
-    if (ownerCodeMapString !== null && ownerCodeMapString.length > 0) {
-      ownerCodeObj = JSON.parse(ownerCodeMapString);
-    }
-
-    delete ownerCodeObj[ownerCode];
-    localStorage.setItem(this.LUNCH_SESSION_OWNER_CODE, JSON.stringify(ownerCodeObj));
-  }
 
   newLunchSession(lunchSession: LunchSession): Promise<LunchSession> {
     return lastValueFrom(

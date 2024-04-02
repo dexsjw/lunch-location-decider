@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LunchSessionService } from '../service/lunch-session.service';
 import { Router } from '@angular/router';
 import { LunchSession } from '../models/lunch-session';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogNoSessionComponent } from '../dialog-no-session/dialog-no-session.component';
+import { DataService } from '../service/data.service';
 
 @Component({
   selector: 'app-main',
@@ -22,8 +23,8 @@ export class MainComponent{
     restaurantsList: this.fb.array([])
   });
 
-  constructor(private lunchSessionSvc: LunchSessionService, private fb: FormBuilder, private router: Router,
-    public dialog: MatDialog) {}
+  constructor(private lunchSessionSvc: LunchSessionService, private dataSvc: DataService, 
+    private fb: FormBuilder, private router: Router, public dialog: MatDialog) {}
 
   openDialog(lunchSession: LunchSession) {
     const dialogRef = this.dialog.open(DialogNoSessionComponent, {data: lunchSession})
@@ -33,8 +34,10 @@ export class MainComponent{
     const lunchSession: LunchSession = this.lunchSessionForm.value;
     this.lunchSessionSvc.newLunchSession(lunchSession)
       .then(lunchSession => {
-        this.lunchSessionSvc.saveLunchSessionOwnerCodeLocally(lunchSession.ownerCode);
-        this.router.navigate(['/room', lunchSession.ownerCode]);
+        // this.lunchSessionSvc.saveLunchSessionOwnerCodeLocally(lunchSession.ownerCode);
+        this.dataSvc.lunchSession = lunchSession;
+        this.dataSvc.saveLunchSessionOwnerCodeLocally(lunchSession.ownerCode);
+        this.router.navigate(['/room']);
       })
       .catch(err => console.error(err));
   }
@@ -43,12 +46,13 @@ export class MainComponent{
     const lunchSession: LunchSession = this.lunchSessionForm.value;
     this.lunchSessionSvc.findLunchSession(lunchSession)
       .then(lunchSession => {
+        this.dataSvc.lunchSession = lunchSession;
         if (lunchSession.restaurants?.startsWith("<Error>:")) {
           this.openDialog(lunchSession);
         } else if (!lunchSession.activeStatus) {
-          this.router.navigate(['/summary', lunchSession.roomCode]);
+          this.router.navigate(['/summary']);
         } else {
-          this.router.navigate(['/room', lunchSession.ownerCode]);
+          this.router.navigate(['/room']);
         }
       })
       .catch(err => console.error(err));
