@@ -21,7 +21,7 @@ public class LunchSessionController {
         return lunchSessionService.newLunchSession(lunchSession);
     }
 
-    @GetMapping(path="/find")
+    @PostMapping(path="/find")
     public LunchSession findLunchSession(@RequestBody LunchSession lunchSession) {
         log.info("Retrieving Lunch Session by room code...");
         return lunchSessionService.findLunchSession(lunchSession);
