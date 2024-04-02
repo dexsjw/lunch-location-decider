@@ -56,6 +56,7 @@ export class RoomComponent implements OnInit {
     this.lunchSessionSvc.endLunchSession(this.lunchSessionForm.value)
       .then(lunchSession => this.router.navigate(['/summary', lunchSession.roomCode]))
       .catch(err => console.error(err));
+    this.lunchSessionSvc.deleteLunchSessionOwnerCodeLocally(this.ownerCode);
   }
 
 }
