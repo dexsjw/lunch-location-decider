@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import tech.challenge.lunchlocationdecider.models.LunchSession;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import tech.challenge.lunchlocationdecider.repositories.LunchSessionRepository;
 
@@ -43,9 +45,9 @@ public class LunchSessionService {
             return lunchSession;
         } else {
             if (!existingLunchSession.isActiveStatus()) {
-                lunchSession.setRestaurants("<Error>: Session has ended.");
-                log.info(lunchSession.getRestaurants());
-                return lunchSession;
+                log.info("<Error>: Session has ended.");
+                existingLunchSession.setRestaurantsList(new ArrayList<>());
+                return existingLunchSession;
             }
 
             String existingRestaurants = existingLunchSession.getRestaurants();
@@ -67,9 +69,9 @@ public class LunchSessionService {
             return lunchSession;
         } else {
             if (!existingLunchSession.isActiveStatus()) {
-                lunchSession.setRestaurants("<Error>: Session has ended.");
-                log.info(lunchSession.getRestaurants());
-                return lunchSession;
+                log.info("<Error>: Session has ended.");
+                existingLunchSession.setRestaurantsList(new ArrayList<>());
+                return existingLunchSession;
             }
             log.info("Lunch Session with Room Code '" + lunchSession.getRoomCode() + "' found!");
 
@@ -96,15 +98,24 @@ public class LunchSessionService {
             return lunchSession;
         } else {
             log.info("Lunch Session with Room Code '" + lunchSession.getRoomCode() + "' found!");
-            lunchSessionRepository.updateLunchSessionActiveStatusByRoomCode(false, lunchSession.getRoomCode());
-            existingLunchSession.setActiveStatus(false);
+            String selectedRestaurant = "";
 
             String existingRestaurants = existingLunchSession.getRestaurants();
             if (existingRestaurants == null || existingRestaurants.isEmpty()) {
                 existingLunchSession.setRestaurantsList(new ArrayList<>());
             } else {
-                existingLunchSession.setRestaurantsList(LunchSession.generateRestaurantsList(existingRestaurants));
+                List<String> restaurantsList = LunchSession.generateRestaurantsList(existingRestaurants);
+                Random random = new Random();
+                selectedRestaurant = restaurantsList.get(random.nextInt(restaurantsList.size()));
+                log.info("Restaurant selected for lunch: " + selectedRestaurant);
+
+                existingLunchSession.setRestaurantsList(restaurantsList);
+                existingLunchSession.setRestaurants(selectedRestaurant);
             }
+
+            lunchSessionRepository.updateLunchSessionRestaurantsAndActiveStatusByRoomCode(selectedRestaurant, false, lunchSession.getRoomCode());
+            existingLunchSession.setActiveStatus(false);
+
             log.info("Successfully ended Lunch Session for Room Code: " + lunchSession.getRoomCode());
             return existingLunchSession;
         }
