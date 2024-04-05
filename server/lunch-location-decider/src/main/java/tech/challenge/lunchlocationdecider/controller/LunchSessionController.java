@@ -6,8 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tech.challenge.lunchlocationdecider.dto.LunchSessionDto;
-import tech.challenge.lunchlocationdecider.entity.LunchSessionEntity;
+import tech.challenge.lunchlocationdecider.dto.LunchSessionRequestDto;
 import tech.challenge.lunchlocationdecider.service.LunchSessionService;
 
 @Log
@@ -19,28 +18,29 @@ public class LunchSessionController {
     private LunchSessionService lunchSessionService;
 
     @PostMapping(path="/new")
-    public ResponseEntity<LunchSessionDto> newLunchSession() {
+    public ResponseEntity<LunchSessionRequestDto> newLunchSession() {
         log.info("Creating a new Lunch Session!");
-        LunchSessionDto lunchSessionDto = lunchSessionService.newLunchSession();
-        return ResponseEntity.status(HttpStatus.CREATED).body(lunchSessionDto);
+        LunchSessionRequestDto lunchSessionRequestDto = lunchSessionService.newLunchSession();
+        return ResponseEntity.status(HttpStatus.CREATED).body(lunchSessionRequestDto);
     }
 
     @PostMapping(path="/find")
-    public ResponseEntity<LunchSessionDto> findLunchSession(@RequestBody LunchSessionDto lunchSessionDto) {
+    public ResponseEntity<LunchSessionRequestDto> findLunchSession(@RequestBody LunchSessionRequestDto lunchSessionRequestDto) {
         log.info("Retrieving Lunch Session by room code...");
-        return lunchSessionService.findLunchSession(lunchSessionDto);
+        lunchSessionRequestDto = lunchSessionService.findLunchSession(lunchSessionRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(lunchSessionRequestDto);
     }
 
-    @PutMapping(path="/update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public LunchSessionDto updateLunchSessionRestaurants(@RequestBody LunchSessionEntity lunchSessionEntity) {
-        log.info("Updating Lunch Session restaurants...");
-        return lunchSessionService.updateLunchSessionRestaurants(lunchSessionEntity);
-    }
-
-    @PutMapping(path="/end", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public LunchSessionDto endLunchSession(@RequestBody LunchSessionEntity lunchSessionEntity) {
-        log.info("Ending Lunch Session...");
-        return lunchSessionService.updateLunchSessionActiveStatus(lunchSessionEntity);
-    }
+//    @PutMapping(path="/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public LunchSessionDto updateLunchSessionRestaurants(@RequestBody LunchSessionEntity lunchSessionEntity) {
+//        log.info("Updating Lunch Session restaurants...");
+//        return lunchSessionService.updateLunchSessionRestaurants(lunchSessionEntity);
+//    }
+//
+//    @PutMapping(path="/end", consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public LunchSessionDto endLunchSession(@RequestBody LunchSessionEntity lunchSessionEntity) {
+//        log.info("Ending Lunch Session...");
+//        return lunchSessionService.updateLunchSessionActiveStatus(lunchSessionEntity);
+//    }
 
 }
