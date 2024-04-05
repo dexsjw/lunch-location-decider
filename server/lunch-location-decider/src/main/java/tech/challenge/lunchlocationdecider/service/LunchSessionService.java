@@ -5,6 +5,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.challenge.lunchlocationdecider.dto.LunchSessionRequestDto;
+import tech.challenge.lunchlocationdecider.dto.LunchSessionResponseDto;
 import tech.challenge.lunchlocationdecider.entity.LunchSessionEntity;
 
 import java.util.*;
@@ -20,71 +21,45 @@ public class LunchSessionService {
     @Autowired
     private LunchSessionRepository lunchSessionRepository;
 
-    public LunchSessionRequestDto newLunchSession() {
+    public LunchSessionResponseDto newLunchSession() {
+        String ownerCode = UUID.randomUUID().toString().substring(0, 8);
         String roomCode = UUID.randomUUID().toString();
-        String ownerCode = UUID.randomUUID().toString().substring(0, 8) + "_" + roomCode;
         LunchSessionEntity lunchSessionEntity = lunchSessionRepository.save(
                 new LunchSessionEntity(0L, ownerCode, roomCode, true, ""));
         log.info("Lunch Session with Room Code '" + roomCode + "' created!");
-        return LunchSessionHelper.toLunchSessionDto(lunchSessionEntity, true);
+        return LunchSessionHelper.toLunchSessionResponseDto(lunchSessionEntity, true, ownerCode);
     }
 
-    public LunchSessionRequestDto findLunchSession(LunchSessionRequestDto lunchSessionRequestDto) {
-        LunchSessionHelper.lunchSessionDtoNullCheck(lunchSessionRequestDto);
+    public LunchSessionResponseDto findLunchSession(LunchSessionRequestDto lunchSessionRequestDto) {
+        LunchSessionHelper.lunchSessionRequestDtoNullCheck(lunchSessionRequestDto);
         String roomCode = lunchSessionRequestDto.getRoomCode();
         log.info("RoomCode: " + roomCode);
-        if (roomCode == null || roomCode.isEmpty()) {
-            return whenLunchSessionRoomCodeEmpty(lunchSessionRequestDto);
+
+        Optional<LunchSessionEntity> optLunchSessionEntity = lunchSessionRepository.findByRoomCode(roomCode);
+        if (optLunchSessionEntity.isPresent()) {
+            log.info("Successfully retrieved Lunch Session for Room Code: " + roomCode);
+            LunchSessionEntity lunchSessionEntity = optLunchSessionEntity.get();
+            boolean hasOwnerCode = lunchSessionRequestDto.getOwnerCode().equals(lunchSessionEntity.getOwnerCode());
+            return lunchSessionActiveStatusCheck(lunchSessionEntity, hasOwnerCode);
+        } else {
+            return lunchSessionRoomCodeCheck(lunchSessionRequestDto);
         }
-        Optional<LunchSessionEntity> optLunchSession = lunchSessionRepository.findByRoomCode(roomCode);
-        LunchSessionEntity lunchSessionEntity = optLunchSession.orElse(
-                new LunchSessionEntity(0L, "", "", false, ""));
-
-        log.info("Successfully retrieved Lunch Session for Room Code: " + roomCode);
-        boolean hasOwnerCode = lunchSessionRequestDto.getOwnerCode().equals(lunchSessionEntity.getOwnerCode());
-        return LunchSessionHelper.toLunchSessionDto(lunchSessionEntity, hasOwnerCode);
     }
 
-    private LunchSessionRequestDto whenLunchSessionRoomCodeEmpty(
-        LunchSessionRequestDto lunchSessionRequestDto) {
-        lunchSessionRequestDto.setMessage("Room Code provided is empty.");
-        return lunchSessionRequestDto;
+    private LunchSessionResponseDto lunchSessionActiveStatusCheck(LunchSessionEntity lunchSessionEntity, boolean hasOwnerCode) {
+        String message = lunchSessionEntity.isActiveStatus()
+                ? "Successfully retrieved Lunch Session for Room Code '" + lunchSessionEntity.getRoomCode() + "'."
+                : "Session for Room Code '" + lunchSessionEntity.getRoomCode() + "' has ended.";
+        return LunchSessionHelper.toLunchSessionResponseDto(lunchSessionEntity, hasOwnerCode, message);
     }
 
-//    private LunchSessionDto whenLunchSessionEntityEmpty(LunchSessionDto lunchSessionDto) {
-//
-//    }
-
-//    public LunchSessionEntity findLunchSession(LunchSessionEntity lunchSessionEntity) {
-//        String roomCode = lunchSessionEntity.getRoomCode();
-//        log.info("RoomCode: " + roomCode);
-//        if (roomCode == null || roomCode.isEmpty()) {
-//            lunchSessionEntity.setRestaurants("<Error>: Room Code provided is empty.");
-//            log.info(lunchSessionEntity.getRestaurants());
-//            return lunchSessionEntity;
-//        }
-//        LunchSessionEntity existingLunchSessionEntity = lunchSessionRepository.findByRoomCode(roomCode);
-//        if (existingLunchSessionEntity == null) {
-//            lunchSessionEntity.setRestaurants("<Error>: Room Code does not exist.");
-//            log.info(lunchSessionEntity.getRestaurants());
-//            return lunchSessionEntity;
-//        } else {
-//            if (!existingLunchSessionEntity.isActiveStatus()) {
-//                log.info("<Error>: Session has ended.");
-//                existingLunchSessionEntity.setRestaurantsList(new ArrayList<>());
-//                return existingLunchSessionEntity;
-//            }
-//
-//            String existingRestaurants = existingLunchSessionEntity.getRestaurants();
-//            if (existingRestaurants == null || existingRestaurants.isEmpty()) {
-//                existingLunchSessionEntity.setRestaurantsList(new ArrayList<>());
-//            } else {
-//                existingLunchSessionEntity.setRestaurantsList(LunchSessionEntity.generateRestaurantsList(existingRestaurants));
-//            }
-//            log.info("Successfully retrieved Lunch Session for Room Code: " + roomCode);
-//            return existingLunchSessionEntity;
-//        }
-//    }
+    private LunchSessionResponseDto lunchSessionRoomCodeCheck(LunchSessionRequestDto lunchSessionRequestDto) {
+        String message = (lunchSessionRequestDto.getRoomCode() == null || lunchSessionRequestDto.getRoomCode().isEmpty())
+                ? "Room Code provided is empty."
+                : "Room Code '" + lunchSessionRequestDto.getRoomCode() + "' does not exist.";
+        return LunchSessionHelper.toLunchSessionResponseDto(lunchSessionRequestDto, false, message);
+    }
+    
 //
 //    public LunchSessionEntity updateLunchSessionRestaurants(LunchSessionEntity lunchSessionEntity) {
 //        LunchSessionEntity existingLunchSessionEntity = lunchSessionRepository.findByRoomCode(lunchSessionEntity.getRoomCode());
