@@ -31,8 +31,8 @@ GO
 INSERT INTO dbo.lunch_session
    ([owner_code],[room_code],[active_status],[restaurants])
 VALUES
-   ('e58ed763_e58ed763-928c-4155-bee9-fdbaaadc15f3', 'e58ed763-928c-4155-bee9-fdbaaadc15f3', 'true', ''),
-   ('e58ed764_e58ed763-928c-4155-bee9-fdbaaadc15f4', 'e58ed763-928c-4155-bee9-fdbaaadc15f4', 'true', 'Macs,KFC,Kopitiam'),
-   ('e58ed765_e58ed763-928c-4155-bee9-fdbaaadc15f5', 'e58ed763-928c-4155-bee9-fdbaaadc15f5', 'false', ''),
-   ('e58ed766_e58ed763-928c-4155-bee9-fdbaaadc15f6', 'e58ed763-928c-4155-bee9-fdbaaadc15f6', 'false', 'Macs')
+   ('e58ed763', 'e58ed763-928c-4155-bee9-fdbaaadc15f3', 'true', ''),
+   ('e58ed764', 'e58ed763-928c-4155-bee9-fdbaaadc15f4', 'true', 'Macs,KFC,Kopitiam'),
+   ('e58ed765', 'e58ed763-928c-4155-bee9-fdbaaadc15f5', 'false', ''),
+   ('e58ed766', 'e58ed763-928c-4155-bee9-fdbaaadc15f6', 'false', 'Macs')
 GO
