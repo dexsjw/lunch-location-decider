@@ -1,6 +1,7 @@
 package tech.challenge.lunchlocationdecider.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LunchSessionDto {
-
-    @JsonProperty("hasOwnerCode")
-    private boolean hasOwnerCode;
+public class LunchSessionRequestDto {
 
     @JsonProperty("ownerCode")
     private String ownerCode;
@@ -21,13 +19,10 @@ public class LunchSessionDto {
     @JsonProperty("roomCode")
     private String roomCode;
 
-    @JsonProperty("activeStatus")
+    @Column(name="active_status", nullable = false)
     private boolean activeStatus;
 
-    @JsonProperty("restaurants")
-    private String restaurants;
-
-    @JsonProperty("message")
-    private String message;
+    @JsonProperty("restaurant")
+    private String restaurant;
 
 }
