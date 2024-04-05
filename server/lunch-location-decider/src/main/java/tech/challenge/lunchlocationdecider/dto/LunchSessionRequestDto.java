@@ -19,7 +19,7 @@ public class LunchSessionRequestDto {
     @JsonProperty("roomCode")
     private String roomCode;
 
-    @Column(name="active_status", nullable = false)
+    @JsonProperty("activeStatus")
     private boolean activeStatus;
 
     @JsonProperty("restaurant")
