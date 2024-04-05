@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.challenge.lunchlocationdecider.dto.LunchSessionRequestDto;
+import tech.challenge.lunchlocationdecider.dto.LunchSessionResponseDto;
 import tech.challenge.lunchlocationdecider.service.LunchSessionService;
 
 @Log
@@ -17,18 +18,18 @@ public class LunchSessionController {
     @Autowired
     private LunchSessionService lunchSessionService;
 
-    @PostMapping(path="/new")
-    public ResponseEntity<LunchSessionRequestDto> newLunchSession() {
+    @GetMapping(path="/new")
+    public ResponseEntity<LunchSessionResponseDto> newLunchSession() {
         log.info("Creating a new Lunch Session!");
-        LunchSessionRequestDto lunchSessionRequestDto = lunchSessionService.newLunchSession();
-        return ResponseEntity.status(HttpStatus.CREATED).body(lunchSessionRequestDto);
+        LunchSessionResponseDto lunchSessionResponseDto = lunchSessionService.newLunchSession();
+        return ResponseEntity.status(HttpStatus.CREATED).body(lunchSessionResponseDto);
     }
 
     @PostMapping(path="/find")
-    public ResponseEntity<LunchSessionRequestDto> findLunchSession(@RequestBody LunchSessionRequestDto lunchSessionRequestDto) {
+    public ResponseEntity<LunchSessionResponseDto> findLunchSession(@RequestBody LunchSessionRequestDto lunchSessionRequestDto) {
         log.info("Retrieving Lunch Session by room code...");
-        lunchSessionRequestDto = lunchSessionService.findLunchSession(lunchSessionRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(lunchSessionRequestDto);
+        LunchSessionResponseDto lunchSessionResponseDto = lunchSessionService.findLunchSession(lunchSessionRequestDto);
+        return ResponseEntity.ok(lunchSessionResponseDto);
     }
 
 //    @PutMapping(path="/update", consumes = MediaType.APPLICATION_JSON_VALUE)
