@@ -32,7 +32,9 @@ public class LunchSessionController {
     public ResponseEntity<LunchSessionResponseDto> findLunchSession(@RequestBody LunchSessionRequestDto lunchSessionRequestDto) {
         log.info("Retrieving Lunch Session by Room ID...");
         LunchSessionResponseDto lunchSessionResponseDto = lunchSessionService.processLunchSessionRequestDto(lunchSessionRequestDto, "find");
-        if (lunchSessionResponseDto.getMessage().startsWith("<404>")) {
+        if (lunchSessionResponseDto.getMessage().startsWith("<400>")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(lunchSessionResponseDto);
+        } else if (lunchSessionResponseDto.getMessage().startsWith("<404>")) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(lunchSessionResponseDto);
         }
         return ResponseEntity.ok(lunchSessionResponseDto);
@@ -42,7 +44,9 @@ public class LunchSessionController {
     public ResponseEntity<LunchSessionResponseDto> updateLunchSessionRestaurants(@RequestBody LunchSessionRequestDto lunchSessionRequestDto) {
         log.info("Updating Lunch Session restaurants...");
         LunchSessionResponseDto lunchSessionResponseDto = lunchSessionService.processLunchSessionRequestDto(lunchSessionRequestDto, "update");
-        if (lunchSessionResponseDto.getMessage().startsWith("<404>")) {
+        if (lunchSessionResponseDto.getMessage().startsWith("<400>")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(lunchSessionResponseDto);
+        } else if (lunchSessionResponseDto.getMessage().startsWith("<404>")) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(lunchSessionResponseDto);
         }
         return  ResponseEntity.ok(lunchSessionResponseDto);
@@ -52,7 +56,9 @@ public class LunchSessionController {
     public ResponseEntity<LunchSessionResponseDto> endLunchSession(@RequestBody LunchSessionRequestDto lunchSessionRequestDto) {
         log.info("Ending Lunch Session...");
         LunchSessionResponseDto lunchSessionResponseDto = lunchSessionService.processLunchSessionRequestDto(lunchSessionRequestDto, "end");
-        if (lunchSessionResponseDto.getMessage().startsWith("<404>")) {
+        if (lunchSessionResponseDto.getMessage().startsWith("<400>")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(lunchSessionResponseDto);
+        } else if (lunchSessionResponseDto.getMessage().startsWith("<404>")) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(lunchSessionResponseDto);
         }
         return  ResponseEntity.ok(lunchSessionResponseDto);
