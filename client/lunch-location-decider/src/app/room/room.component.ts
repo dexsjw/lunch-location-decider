@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { LunchSessionService } from '../service/lunch-session.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DataService } from '../service/data.service';
+import { LunchSessionResponse } from '../models/lunch-session';
 
 @Component({
   selector: 'app-room',
@@ -12,27 +13,29 @@ import { DataService } from '../service/data.service';
 export class RoomComponent implements OnInit {
 
   hasOwnerCode: boolean = false;
-  roomCode: string = "";
+  roomId: string = "";
 
   dataSource: string[] = [];
   displayedColumns: string[] = ["restaurants"]
 
-  lunchSessionForm: FormGroup = this.fb.group({
-    id: this.fb.control(''),
+  lunchSessionRequestForm: FormGroup = this.fb.group({
+    roomId: this.fb.control(''),
     ownerCode: this.fb.control(''),
-    roomCode: this.fb.control(''),
-    activeStatus: this.fb.control(''),
-    restaurants: this.fb.control(''),
-    restaurantsList: this.fb.array([])
+    activeStatus: this.fb.control(true),
+    restaurant: this.fb.control('')
   });
 
   constructor(private lunchSessionSvc: LunchSessionService, private dataSvc: DataService,
     private fb: FormBuilder, private router: Router) {}
 
   ngOnInit(): void {
-    this.hasOwnerCode = this.dataSvc.hasLunchSessionOwnerCodeLocally(this.dataSvc.lunchSession.ownerCode);
-    this.roomCode = this.dataSvc.lunchSession.roomCode;
-    this.dataSource = this.dataSvc.lunchSession.restaurantsList ?? [];
+    if (this.dataSvc.lunchSessionResponse.roomId.length <= 0) {
+      this.router.navigate(['/main']);
+    }
+    this.hasOwnerCode = this.dataSvc.lunchSessionResponse.hasOwnerCode ?? false;
+    this.roomId = this.dataSvc.lunchSessionResponse.roomId ?? "";
+    const restaurants = this.dataSvc.lunchSessionResponse.restaurants ?? "";
+    this.dataSource = restaurants.split(",");
   }  
 
   navigateBackToMain() {
@@ -40,39 +43,61 @@ export class RoomComponent implements OnInit {
   }
 
   refreshTable() {
-    this.lunchSessionSvc.findLunchSession(this.dataSvc.lunchSession)
-      .then(lunchSession => {
-        this.dataSvc.lunchSession = lunchSession;
-        if (!lunchSession.activeStatus) {
-          this.router.navigate(['/summary']);
-        }
-        this.dataSource = lunchSession.restaurantsList ?? [];
+    this.populateLunchSessionRequestForm(false);
+
+    this.lunchSessionSvc.findLunchSession(this.lunchSessionRequestForm.value)
+      .then(lunchSessionResponse => {
+        this.dataSvc.lunchSessionResponse = lunchSessionResponse;
+        this.lunchSessionResponseCheck(lunchSessionResponse);
+        this.populateDataSource(lunchSessionResponse);
       })
-      .catch(err => console.error(err));
+      .catch(err => console.error(err.error));
   }
 
   submitRestaurantName() {
-    this.lunchSessionForm.get("roomCode")?.setValue(this.dataSvc.lunchSession.roomCode);
-    this.lunchSessionSvc.updateLunchSessionRestaurants(this.lunchSessionForm.value)
-      .then(lunchSession => {
-        this.dataSvc.lunchSession = lunchSession
-        if (!lunchSession.activeStatus) {
-          this.router.navigate(['/summary']);
-        }
-        this.dataSource = lunchSession.restaurantsList ?? []
+    this.populateLunchSessionRequestForm(false);
+
+    this.lunchSessionSvc.updateLunchSessionRestaurants(this.lunchSessionRequestForm.value)
+      .then(lunchSessionResponse => {
+        this.dataSvc.lunchSessionResponse = lunchSessionResponse;
+        this.lunchSessionResponseCheck(lunchSessionResponse);
+        this.populateDataSource(lunchSessionResponse);
+        this.lunchSessionRequestForm.get("restaurant")?.setValue('');
       })
-      .catch(err => console.error(err));
-    this.lunchSessionForm.get("restaurants")?.setValue('');
+      .catch(err => console.error(err.error));
   }
 
   endLunchSession() {
-    this.lunchSessionSvc.endLunchSession(this.dataSvc.lunchSession)
-      .then(lunchSession => {
-        this.dataSvc.lunchSession = lunchSession;
-        this.dataSvc.clearLunchSessionOwnerCodeLocally();
+    this.populateLunchSessionRequestForm(true)
+
+    this.lunchSessionSvc.endLunchSession(this.lunchSessionRequestForm.value)
+      .then(lunchSessionResponse => {
+        this.dataSvc.lunchSessionResponse = lunchSessionResponse;
+        localStorage.removeItem(this.roomId);
         this.router.navigate(['/summary']);
       })
-      .catch(err => console.error(err));
+      .catch(err => console.error(err.error));
+  }
+
+  populateLunchSessionRequestForm(endSession: boolean) {
+    const ownerCode: string = localStorage.getItem(this.roomId) ?? "";
+    this.lunchSessionRequestForm.get("ownerCode")?.setValue(ownerCode);
+    this.lunchSessionRequestForm.get("roomId")?.setValue(this.roomId);
+    if (endSession) {
+      this.lunchSessionRequestForm.get("activeStatus")?.setValue(false);
+    }
+  }
+
+  lunchSessionResponseCheck(lunchSessionResponse: LunchSessionResponse) {
+    if (!lunchSessionResponse.activeStatus) {
+      this.router.navigate(['/summary']);
+    }
+    this.hasOwnerCode = lunchSessionResponse.hasOwnerCode ?? false;
+  }
+
+  populateDataSource(lunchSessionResponse: LunchSessionResponse) {
+    const restaurants = lunchSessionResponse.restaurants ?? "";
+    this.dataSource = restaurants.split(",");
   }
 
 }

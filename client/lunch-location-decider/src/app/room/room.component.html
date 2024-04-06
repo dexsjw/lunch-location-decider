@@ -1,4 +1,4 @@
-<form [formGroup]="lunchSessionForm"
+<form [formGroup]="lunchSessionRequestForm"
     (ngSubmit)="submitRestaurantName()">
     <button mat-stroked-button
         type="button"
@@ -10,7 +10,7 @@
     <mat-card>
         <mat-card-header>
             <mat-card-title class="margin-around">
-                Room Code: {{ roomCode }}
+                Room ID: {{ roomId }}
             </mat-card-title>
         </mat-card-header>
 
@@ -20,7 +20,7 @@
                     <mat-label>Add a restaurant</mat-label>
                     <input matInput 
                         placeholder="Restaurant Name"
-                        formControlName="restaurants">
+                        formControlName="restaurant">
                 </mat-form-field>
                 <button mat-stroked-button
                     type="submit"
