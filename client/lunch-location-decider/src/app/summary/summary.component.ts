@@ -10,14 +10,17 @@ import { DataService } from '../service/data.service';
 })
 export class SummaryComponent implements OnInit {
 
-  roomCode: string = "";
+  roomId: string = "";
   restaurant: string = "";
 
   constructor(private dataSvc: DataService, private lunchSessionSvc: LunchSessionService, private router: Router) {}
 
   ngOnInit(): void {
-    this.roomCode = this.dataSvc.lunchSession.roomCode;
-    this.restaurant = this.dataSvc.lunchSession.restaurants ?? "N.A.";
+    if (this.dataSvc.lunchSessionResponse.roomId.length <= 0) {
+      this.router.navigate(['/main']);
+    }
+    this.roomId = this.dataSvc.lunchSessionResponse.roomId ?? "";
+    this.restaurant = this.dataSvc.lunchSessionResponse.restaurants ?? "N.A.";
   }
 
   navigateBackToMain() {
