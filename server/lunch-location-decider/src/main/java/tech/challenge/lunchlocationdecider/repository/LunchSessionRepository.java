@@ -8,11 +8,12 @@ import org.springframework.stereotype.Repository;
 import tech.challenge.lunchlocationdecider.entity.LunchSessionEntity;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface LunchSessionRepository extends JpaRepository<LunchSessionEntity, Long> {
+public interface LunchSessionRepository extends JpaRepository<LunchSessionEntity, UUID> {
 
-    Optional<LunchSessionEntity> findByRoomCode(String roomCode);
+//    Optional<LunchSessionEntity> findByRoomCode(String roomCode);
 
 //    @Modifying(flushAutomatically = true)
 //    @Query("UPDATE LunchSession ls SET ls.restaurants = :restaurants WHERE ls.roomCode = :roomCode")
