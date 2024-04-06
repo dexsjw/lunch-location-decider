@@ -1,3 +1,4 @@
+-- Execute these commands in MS SQL Server
 USE master
 GO
 IF NOT EXISTS (
@@ -18,9 +19,8 @@ GO
 
 -- Create the table in the specified schema
 CREATE TABLE dbo.lunch_session (
-    id BIGINT NOT NULL PRIMARY KEY IDENTITY, -- primary key column
+    room_id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, -- primary key column
     owner_code VARCHAR(50) NOT NULL UNIQUE,
-    room_code VARCHAR(50) NOT NULL UNIQUE,
     active_status BIT NOT NULL,
 	restaurants NVARCHAR(MAX) NULL
 )
@@ -29,10 +29,10 @@ GO
 -- OPTIONAL STEP
 -- Insert sample rows into table 'lunch_session'
 INSERT INTO dbo.lunch_session
-   ([owner_code],[room_code],[active_status],[restaurants])
+   ([room_id],[owner_code],[active_status],[restaurants])
 VALUES
-   ('e58ed763', 'e58ed763-928c-4155-bee9-fdbaaadc15f3', 'true', ''),
-   ('e58ed764', 'e58ed763-928c-4155-bee9-fdbaaadc15f4', 'true', 'Macs,KFC,Kopitiam'),
-   ('e58ed765', 'e58ed763-928c-4155-bee9-fdbaaadc15f5', 'false', ''),
-   ('e58ed766', 'e58ed763-928c-4155-bee9-fdbaaadc15f6', 'false', 'Macs')
+   ('e58ed763-928c-4155-bee9-fdbaaadc15f3', 'e58ed763', 'true', ''),
+   ('e58ed763-928c-4155-bee9-fdbaaadc15f4', 'e58ed764', 'true', 'Macs,KFC,Kopitiam'),
+   ('e58ed763-928c-4155-bee9-fdbaaadc15f5', 'e58ed765', 'false', ''),
+   ('e58ed763-928c-4155-bee9-fdbaaadc15f6', 'e58ed766', 'false', 'Macs')
 GO
