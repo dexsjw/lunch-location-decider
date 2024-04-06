@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,15 +17,15 @@ import lombok.Setter;
 public class LunchSessionEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "room_id")
+    private UUID roomId;
 
-    @Column(name = "owner_code", nullable = false, unique = true)
+    @Column(name = "owner_code", nullable = false)
     private String ownerCode;
 
-    @Column(name="room_code", nullable = false, unique = true)
-    private String roomCode;
+//    @Column(name="room_code", nullable = false, unique = true)
+//    private String roomCode;
 
     @Column(name="active_status", nullable = false)
     private boolean activeStatus;
@@ -33,13 +35,11 @@ public class LunchSessionEntity {
 
     @Override
     public String toString() {
-        return "LunchSession{" +
-                "id=" + id + "\n" +
-                ", ownerCode='" + ownerCode + "'\n" +
-                ", roomCode='" + roomCode + "'\n" +
-                ", activeStatus=" + activeStatus + "\n" +
-                ", restaurants='" + restaurants + "'\n" +
+        return "LunchSessionEntity{" +
+                "roomId=" + roomId +
+                ", ownerCode='" + ownerCode + '\'' +
+                ", activeStatus=" + activeStatus +
+                ", restaurants='" + restaurants + '\'' +
                 '}';
     }
-
 }
