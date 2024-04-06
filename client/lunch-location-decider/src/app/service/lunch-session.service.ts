@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LunchSession } from '../models/lunch-session';
+import { LunchSessionRequest, LunchSessionResponse } from '../models/lunch-session';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable({
@@ -8,32 +8,31 @@ import { lastValueFrom } from 'rxjs';
 })
 export class LunchSessionService {
 
-  LUNCH_SESSION_OWNER_CODE: string = "LUNCH_SESSION_OWNER_CODE";
   BASE_URL: string = "/lunch/session";
 
   constructor(private httpClient: HttpClient) { }
 
-  newLunchSession(lunchSession: LunchSession): Promise<LunchSession> {
+  newLunchSession(): Promise<LunchSessionResponse> {
     return lastValueFrom(
-      this.httpClient.post<LunchSession>(this.BASE_URL + '/new', lunchSession)
+      this.httpClient.get<LunchSessionResponse>(this.BASE_URL + '/new')
     );
   }
 
-  findLunchSession(lunchSession: LunchSession): Promise<LunchSession> {
+  findLunchSession(lunchSessionRequest: LunchSessionRequest): Promise<LunchSessionResponse> {
     return lastValueFrom(
-      this.httpClient.post<LunchSession>(this.BASE_URL + '/find', lunchSession)
+      this.httpClient.post<LunchSessionResponse>(this.BASE_URL + '/find', lunchSessionRequest)
     );
   }
 
-  updateLunchSessionRestaurants(lunchSession: LunchSession): Promise<LunchSession> {
+  updateLunchSessionRestaurants(lunchSessionRequest: LunchSessionRequest): Promise<LunchSessionResponse> {
     return lastValueFrom(
-      this.httpClient.put<LunchSession>(this.BASE_URL + '/update', lunchSession)
+      this.httpClient.put<LunchSessionResponse>(this.BASE_URL + '/update', lunchSessionRequest)
     );
   }
 
-  endLunchSession(lunchSession: LunchSession): Promise<LunchSession> {
+  endLunchSession(lunchSessionRequest: LunchSessionRequest): Promise<LunchSessionResponse> {
     return lastValueFrom(
-      this.httpClient.put<LunchSession>(this.BASE_URL + '/end', lunchSession)
+      this.httpClient.put<LunchSessionResponse>(this.BASE_URL + '/end', lunchSessionRequest)
     );
   }
 
