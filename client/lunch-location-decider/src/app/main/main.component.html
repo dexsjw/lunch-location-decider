@@ -1,4 +1,4 @@
-<form [formGroup]="lunchSessionForm"
+<form [formGroup]="lunchSessionRequestForm"
     (ngSubmit)="findLunchSessionByRoomCode()">
     <section class="btm-margin">
         <mat-card>
@@ -28,10 +28,10 @@
             <mat-card-content>
                 <div>
                     <mat-form-field>
-                        <mat-label>Join a room with code:</mat-label>
+                        <mat-label>Join a room with Room ID:</mat-label>
                         <input matInput 
                             placeholder="Room Code"
-                            formControlName="roomCode">
+                            formControlName="roomId">
                     </mat-form-field>
                 </div>
             </mat-card-content>
