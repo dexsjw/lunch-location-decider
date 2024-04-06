@@ -1,8 +1,7 @@
-<h2 mat-dialog-title>Session Does Not Exist</h2>
+<h2 mat-dialog-title>Lunch Session Does Not Exist</h2>
 <mat-dialog-content>
-    <p>{{ lunchSessionData.restaurants }}</p>
-    <p>Room Code: {{ lunchSessionData.roomCode }}</p>
-    <p>Please check if Room Code provided is accurate.</p>
+    <p>Room ID: {{ lunchSessionResponse.roomId }}</p>
+    <p>{{ message}}</p>
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-stroked-button
