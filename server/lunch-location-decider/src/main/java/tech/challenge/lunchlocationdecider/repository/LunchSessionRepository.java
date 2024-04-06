@@ -13,16 +13,4 @@ import java.util.UUID;
 @Repository
 public interface LunchSessionRepository extends JpaRepository<LunchSessionEntity, UUID> {
 
-//    Optional<LunchSessionEntity> findByRoomCode(String roomCode);
-
-//    @Modifying(flushAutomatically = true)
-//    @Query("UPDATE LunchSession ls SET ls.restaurants = :restaurants WHERE ls.roomCode = :roomCode")
-//    void updateLunchSessionRestaurantsByRoomCode(@Param("restaurants") String restaurants, @Param("roomCode") String roomCode);
-//
-//    @Modifying(flushAutomatically = true)
-//    @Query("UPDATE LunchSession ls SET ls.restaurants = :restaurants, ls.activeStatus = :activeStatus WHERE ls.roomCode = :roomCode")
-//    void updateLunchSessionRestaurantsAndActiveStatusByRoomCode(@Param("restaurants") String restaurants,
-//                                                                @Param("activeStatus") boolean activeStatus,
-//                                                                @Param("roomCode") String roomCode);
-
 }
