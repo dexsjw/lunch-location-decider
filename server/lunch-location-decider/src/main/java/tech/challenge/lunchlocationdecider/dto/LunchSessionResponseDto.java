@@ -12,11 +12,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LunchSessionResponseDto {
 
+  @JsonProperty("roomId")
+  private String roomId;
+
   @JsonProperty("hasOwnerCode")
   private boolean hasOwnerCode;
-
-  @JsonProperty("roomCode")
-  private String roomCode;
 
   @JsonProperty("activeStatus")
   private boolean activeStatus;
