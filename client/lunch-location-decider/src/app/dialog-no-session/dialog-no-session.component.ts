@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { LunchSession } from '../models/lunch-session';
+import { LunchSessionResponse } from '../models/lunch-session';
 
 @Component({
   selector: 'app-dialog-no-session',
@@ -9,6 +9,10 @@ import { LunchSession } from '../models/lunch-session';
 })
 export class DialogNoSessionComponent {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public lunchSessionData: LunchSession) {}
+  message: string = "";
+
+  constructor(@Inject(MAT_DIALOG_DATA) public lunchSessionResponse: LunchSessionResponse) {
+    this.message = lunchSessionResponse.message?.substring(5) ?? "";
+  }
 
 }
