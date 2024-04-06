@@ -22,74 +22,180 @@ public class LunchSessionService {
     private LunchSessionRepository lunchSessionRepository;
 
     public LunchSessionResponseDto newLunchSession() {
+        UUID roomId = UUID.randomUUID();
+        String roomIdStr = roomId.toString();
         String ownerCode = UUID.randomUUID().toString().substring(0, 8);
-        String roomCode = UUID.randomUUID().toString();
-        LunchSessionEntity lunchSessionEntity = lunchSessionRepository.save(
-                new LunchSessionEntity(0L, ownerCode, roomCode, true, ""));
-        log.info("Lunch Session with Room Code '" + roomCode + "' created!");
+        LunchSessionEntity lunchSessionEntity = lunchSessionRepository.saveAndFlush(
+                new LunchSessionEntity(roomId, ownerCode, true, ""));
+        log.info("Lunch Session with Room ID '" + roomIdStr + "' created!");
         return LunchSessionHelper.toLunchSessionResponseDto(lunchSessionEntity, true, ownerCode);
     }
 
-    public LunchSessionResponseDto findLunchSession(LunchSessionRequestDto lunchSessionRequestDto) {
+    public LunchSessionResponseDto processLunchSessionRequestDto(LunchSessionRequestDto lunchSessionRequestDto, String action) {
         LunchSessionHelper.lunchSessionRequestDtoNullCheck(lunchSessionRequestDto);
-        String roomCode = lunchSessionRequestDto.getRoomCode();
-        log.info("RoomCode: " + roomCode);
+        String roomIdStr = lunchSessionRequestDto.getRoomId();
+        log.info("Room ID: " + roomIdStr);
 
-        Optional<LunchSessionEntity> optLunchSessionEntity = lunchSessionRepository.findByRoomCode(roomCode);
-        if (optLunchSessionEntity.isPresent()) {
-            log.info("Successfully retrieved Lunch Session for Room Code: " + roomCode);
-            LunchSessionEntity lunchSessionEntity = optLunchSessionEntity.get();
-            boolean hasOwnerCode = lunchSessionRequestDto.getOwnerCode().equals(lunchSessionEntity.getOwnerCode());
-            return lunchSessionActiveStatusCheck(lunchSessionEntity, hasOwnerCode);
-        } else {
-            return lunchSessionRoomCodeCheck(lunchSessionRequestDto);
+        try {
+            Optional<LunchSessionEntity> optLunchSessionEntity = lunchSessionRepository.findById(UUID.fromString(lunchSessionRequestDto.getRoomId()));
+            if (optLunchSessionEntity.isPresent()) {
+                LunchSessionEntity lunchSessionEntity = optLunchSessionEntity.get();
+
+                String msg = "";
+                switch (action) {
+                    case "find": {
+                        msg = "Successfully retrieved Lunch Session for Room ID '" + roomIdStr + "'.";
+                        break;
+                    }
+                    case "update": {
+                        lunchSessionEntity.setRestaurants(updateRestaurants(lunchSessionEntity.getRestaurants(), lunchSessionRequestDto.getRestaurant()));
+                        lunchSessionRepository.saveAndFlush(lunchSessionEntity);
+                        msg = "Successfully updated Lunch Session restaurants for Room ID '" + roomIdStr + "'.";
+                        break;
+                    }
+                    case "end": {
+                        chooseRestaurantAndEndSession(lunchSessionEntity, lunchSessionRequestDto.isActiveStatus());
+                        msg = "Successfully ended Lunch Session for Room Code: '" + roomIdStr + "'.";
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
+                }
+                log.info(msg);
+
+                boolean hasOwnerCode = lunchSessionRequestDto.getOwnerCode().equals(lunchSessionEntity.getOwnerCode());
+                return lunchSessionActiveStatusCheck(lunchSessionEntity, hasOwnerCode, msg);
+            } else {
+                return lunchSessionRoomIdCheck(lunchSessionRequestDto);
+            }
+        } catch (IllegalArgumentException iae) {
+            iae.printStackTrace();
+            String message = "Room ID provided is not the right format, please check.";
+            return LunchSessionHelper.toLunchSessionResponseDto(lunchSessionRequestDto, false, message);
         }
     }
 
-    private LunchSessionResponseDto lunchSessionActiveStatusCheck(LunchSessionEntity lunchSessionEntity, boolean hasOwnerCode) {
+//    public LunchSessionResponseDto findLunchSession(LunchSessionRequestDto lunchSessionRequestDto) {
+//        LunchSessionHelper.lunchSessionRequestDtoNullCheck(lunchSessionRequestDto);
+//        String roomIdStr = lunchSessionRequestDto.getRoomId();
+//        log.info("Room ID: " + roomIdStr);
+//
+//        try {
+//            Optional<LunchSessionEntity> optLunchSessionEntity = lunchSessionRepository.findById(UUID.fromString(lunchSessionRequestDto.getRoomId()));
+//            if (optLunchSessionEntity.isPresent()) {
+//                String msg = "Successfully retrieved Lunch Session for Room ID '" + roomIdStr + "'.";
+//
+//                LunchSessionEntity lunchSessionEntity = optLunchSessionEntity.get();
+//                log.info(msg);
+//
+//                boolean hasOwnerCode = lunchSessionRequestDto.getOwnerCode().equals(lunchSessionEntity.getOwnerCode());
+//                return lunchSessionActiveStatusCheck(lunchSessionEntity, hasOwnerCode, msg);
+//            } else {
+//                return lunchSessionRoomIdCheck(lunchSessionRequestDto);
+//            }
+//        } catch (IllegalArgumentException iae) {
+//            iae.printStackTrace();
+//            String message = "Room ID provided is not the right format, please check.";
+//            return LunchSessionHelper.toLunchSessionResponseDto(lunchSessionRequestDto, false, message);
+//        }
+//    }
+
+//    public LunchSessionResponseDto updateLunchSessionRestaurants(LunchSessionRequestDto lunchSessionRequestDto) {
+//        LunchSessionHelper.lunchSessionRequestDtoNullCheck(lunchSessionRequestDto);
+//        String roomIdStr = lunchSessionRequestDto.getRoomId();
+//        log.info("Room ID: " + roomIdStr);
+//
+//        try {
+//            Optional<LunchSessionEntity> optLunchSessionEntity = lunchSessionRepository.findById(UUID.fromString(lunchSessionRequestDto.getRoomId()));
+//            if (optLunchSessionEntity.isPresent()) {
+//                String msg = "Successfully updated Lunch Session restaurants for Room ID '" + roomIdStr + "'.";
+//
+//                LunchSessionEntity lunchSessionEntity = optLunchSessionEntity.get();
+//                lunchSessionEntity.setRestaurants(updateRestaurants(lunchSessionEntity.getRestaurants(), lunchSessionRequestDto.getRestaurant()));
+//                lunchSessionRepository.saveAndFlush(lunchSessionEntity);
+//                log.info(msg);
+//
+//                boolean hasOwnerCode = lunchSessionRequestDto.getOwnerCode().equals(lunchSessionEntity.getOwnerCode());
+//                return lunchSessionActiveStatusCheck(lunchSessionEntity, hasOwnerCode, msg);
+//            } else {
+//                return lunchSessionRoomIdCheck(lunchSessionRequestDto);
+//            }
+//        } catch (IllegalArgumentException iae) {
+//            iae.printStackTrace();
+//            String message = "Room ID provided is not the right format, please check.";
+//            return LunchSessionHelper.toLunchSessionResponseDto(lunchSessionRequestDto, false, message);
+//        }
+//    }
+
+//    public LunchSessionResponseDto endLunchSession(LunchSessionRequestDto lunchSessionRequestDto) {
+//        LunchSessionHelper.lunchSessionRequestDtoNullCheck(lunchSessionRequestDto);
+//        String roomIdStr = lunchSessionRequestDto.getRoomId();
+//        log.info("Room ID: " + roomIdStr);
+//
+//        try {
+//            Optional<LunchSessionEntity> optLunchSessionEntity = lunchSessionRepository.findById(UUID.fromString(lunchSessionRequestDto.getRoomId()));
+//            if (optLunchSessionEntity.isPresent()) {
+//                String msg = "Successfully ended Lunch Session for Room Code: '" + roomIdStr + "'.";
+//
+//                LunchSessionEntity lunchSessionEntity = optLunchSessionEntity.get();
+//                Random random = new Random();
+//                List<String> restaurantsList = Arrays.asList(lunchSessionEntity.getRestaurants().split(","));
+//                String selectedRestaurant = restaurantsList.get(random.nextInt(restaurantsList.size()));
+//                log.info("Restaurant selected for lunch: " + selectedRestaurant);
+//
+//                lunchSessionEntity.setRestaurants(selectedRestaurant);
+//                lunchSessionEntity.setActiveStatus(lunchSessionRequestDto.isActiveStatus());
+//                lunchSessionRepository.saveAndFlush(lunchSessionEntity);
+//                log.info(msg);
+//
+//                boolean hasOwnerCode = lunchSessionRequestDto.getOwnerCode().equals(lunchSessionEntity.getOwnerCode());
+//                return lunchSessionActiveStatusCheck(lunchSessionEntity, hasOwnerCode, msg);
+//            } else {
+//                return lunchSessionRoomIdCheck(lunchSessionRequestDto);
+//            }
+//        } catch (IllegalArgumentException iae) {
+//            iae.printStackTrace();
+//            String message = "Room ID provided is not the right format, please check.";
+//            return LunchSessionHelper.toLunchSessionResponseDto(lunchSessionRequestDto, false, message);
+//        }
+//    }
+
+    private String updateRestaurants(String restaurants, String restaurant) {
+        if (restaurants == null || restaurants.isEmpty()) {
+            restaurants = restaurant;
+        } else {
+            restaurants = String.join(",", restaurants, restaurant);
+        }
+        return restaurants;
+    }
+
+    private void chooseRestaurantAndEndSession(LunchSessionEntity lunchSessionEntity, boolean activeStatus) {
+        Random random = new Random();
+        List<String> restaurantsList = Arrays.asList(lunchSessionEntity.getRestaurants().split(","));
+        String selectedRestaurant = restaurantsList.get(random.nextInt(restaurantsList.size()));
+        log.info("Restaurant selected for lunch: " + selectedRestaurant);
+
+        lunchSessionEntity.setRestaurants(selectedRestaurant);
+        lunchSessionEntity.setActiveStatus(activeStatus);
+        lunchSessionRepository.saveAndFlush(lunchSessionEntity);
+    }
+
+    private LunchSessionResponseDto lunchSessionActiveStatusCheck(LunchSessionEntity lunchSessionEntity, boolean hasOwnerCode,
+                                                                  String msg) {
         String message = lunchSessionEntity.isActiveStatus()
-                ? "Successfully retrieved Lunch Session for Room Code '" + lunchSessionEntity.getRoomCode() + "'."
-                : "Session for Room Code '" + lunchSessionEntity.getRoomCode() + "' has ended.";
+                ? msg
+                : "Session for Room Code '" + lunchSessionEntity.getRoomId().toString() + "' has ended.";
         return LunchSessionHelper.toLunchSessionResponseDto(lunchSessionEntity, hasOwnerCode, message);
     }
 
-    private LunchSessionResponseDto lunchSessionRoomCodeCheck(LunchSessionRequestDto lunchSessionRequestDto) {
-        String message = (lunchSessionRequestDto.getRoomCode() == null || lunchSessionRequestDto.getRoomCode().isEmpty())
-                ? "Room Code provided is empty."
-                : "Room Code '" + lunchSessionRequestDto.getRoomCode() + "' does not exist.";
+    private LunchSessionResponseDto lunchSessionRoomIdCheck(LunchSessionRequestDto lunchSessionRequestDto) {
+        String message = (lunchSessionRequestDto.getRoomId() == null || lunchSessionRequestDto.getRoomId().isEmpty())
+                ? "<404>Room Code provided is empty."
+                : "<404>Room Code '" + lunchSessionRequestDto.getRoomId() + "' does not exist.";
         return LunchSessionHelper.toLunchSessionResponseDto(lunchSessionRequestDto, false, message);
     }
-    
-//
-//    public LunchSessionEntity updateLunchSessionRestaurants(LunchSessionEntity lunchSessionEntity) {
-//        LunchSessionEntity existingLunchSessionEntity = lunchSessionRepository.findByRoomCode(lunchSessionEntity.getRoomCode());
-//        if (existingLunchSessionEntity == null) {
-//            lunchSessionEntity.setRestaurants("<Error>: Room Code does not exist.");
-//            log.info(lunchSessionEntity.getRestaurants());
-//            return lunchSessionEntity;
-//        } else {
-//            if (!existingLunchSessionEntity.isActiveStatus()) {
-//                log.info("<Error>: Session has ended.");
-//                existingLunchSessionEntity.setRestaurantsList(new ArrayList<>());
-//                return existingLunchSessionEntity;
-//            }
-//            log.info("Lunch Session with Room Code '" + lunchSessionEntity.getRoomCode() + "' found!");
-//
-//            String existingRestaurants = existingLunchSessionEntity.getRestaurants();
-//            String updatedRestaurants = "";
-//            if (existingRestaurants == null || existingRestaurants.isEmpty()) {
-//                updatedRestaurants = lunchSessionEntity.getRestaurants();
-//            } else {
-//                updatedRestaurants = String.join(",", existingRestaurants, lunchSessionEntity.getRestaurants());
-//            }
-//            lunchSessionRepository.updateLunchSessionRestaurantsByRoomCode(updatedRestaurants, lunchSessionEntity.getRoomCode());
-//            existingLunchSessionEntity.setRestaurants(updatedRestaurants);
-//            existingLunchSessionEntity.setRestaurantsList(LunchSessionEntity.generateRestaurantsList(updatedRestaurants));
-//            log.info("Successfully updated Lunch Session restaurants for Room Code: " + lunchSessionEntity.getRoomCode());
-//            return existingLunchSessionEntity;
-//        }
-//    }
-//
+
 //    public LunchSessionEntity updateLunchSessionActiveStatus(LunchSessionEntity lunchSessionEntity) {
 //        LunchSessionEntity existingLunchSessionEntity = lunchSessionRepository.findByRoomCode(lunchSessionEntity.getRoomCode());
 //        if (existingLunchSessionEntity == null) {
