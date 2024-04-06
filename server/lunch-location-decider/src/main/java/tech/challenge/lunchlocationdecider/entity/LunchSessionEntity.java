@@ -24,9 +24,6 @@ public class LunchSessionEntity {
     @Column(name = "owner_code", nullable = false)
     private String ownerCode;
 
-//    @Column(name="room_code", nullable = false, unique = true)
-//    private String roomCode;
-
     @Column(name="active_status", nullable = false)
     private boolean activeStatus;
 
