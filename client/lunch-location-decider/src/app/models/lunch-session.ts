@@ -1,8 +1,14 @@
-export interface LunchSession {
-    id: number,
+export interface LunchSessionRequest {
+    roomId: string,
     ownerCode: string,
-    roomCode: string,
+    activeStatus: boolean,
+    restaurant: string | null
+}
+
+export interface LunchSessionResponse {
+    roomId: string,
+    hasOwnerCode: boolean,
     activeStatus: boolean,
     restaurants: string | null,
-    restaurantsList: string[] | null
+    message: string | null
 }
