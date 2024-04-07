@@ -10,7 +10,14 @@ describe('DataService', () => {
     service = TestBed.inject(DataService);
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+  it('lunchSessionResponse should be created', () => {
+    expect(service.lunchSessionResponse).toBeTruthy();
+    expect(service.lunchSessionResponse).toEqual({
+      roomId: "",
+      hasOwnerCode: false,
+      activeStatus: false,
+      restaurants: "",
+      message: ""
+    });
   });
 });
