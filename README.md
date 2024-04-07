@@ -23,4 +23,6 @@ Assumption: If you are using MS SQL Server for database, this readme / guide doe
     - or
     - mvn clean spring-boot:run
 3. To start up the frontend, run the command:
-    ng serve
+    - ng serve
+4. Go to http://localhost:4200/ and you will be on the landing page.
+5. Explore and enjoy using the app!
