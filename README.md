@@ -11,6 +11,12 @@ There is frequently a need for teams to collectively decide on a location to hea
     - At the end of a session, a restaurant is randomly picked from all submitted restaurants. All users in the session are then able to see the picked restaurant.
     - A user should not be able to join a session that has already ended.
 
+### Design Considerations
+* This app is meant to be quick and easy to use.
+* No login is required, just sharing of room ID.
+* If room ID is lost, users can just create a new lunch session room again.
+* Including user login can be considered for future implementations.
+
 ## Steps to use this app
 Note: The SQL statements provided in server/lunch-location-decider/lunch_location_decider.sql is meant to be used with MS SQL Server. If you are using other databases, you may set up accordingly with reference to provided SQL statements.
 
