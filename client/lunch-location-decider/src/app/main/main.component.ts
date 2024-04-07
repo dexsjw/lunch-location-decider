@@ -17,7 +17,7 @@ export class MainComponent{
   lunchSessionRequestForm: FormGroup = this.fb.group({
     roomId: this.fb.control(''),
     ownerCode: this.fb.control(''),
-    activeStatus: this.fb.control(''),
+    activeStatus: this.fb.control(true),
     restaurant: this.fb.control('')
   });
 
