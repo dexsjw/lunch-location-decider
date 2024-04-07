@@ -1,15 +1,11 @@
 package tech.challenge.lunchlocationdecider.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -30,13 +26,4 @@ public class LunchSessionEntity {
     @Column(name="restaurants")
     private String restaurants;
 
-    @Override
-    public String toString() {
-        return "LunchSessionEntity{" +
-                "roomId=" + roomId +
-                ", ownerCode='" + ownerCode + '\'' +
-                ", activeStatus=" + activeStatus +
-                ", restaurants='" + restaurants + '\'' +
-                '}';
-    }
 }
