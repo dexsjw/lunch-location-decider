@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LunchSessionService } from '../service/lunch-session.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataService } from '../service/data.service';
 import { LunchSessionResponse } from '../models/lunch-session';
 
@@ -22,7 +22,7 @@ export class RoomComponent implements OnInit {
     roomId: this.fb.control(''),
     ownerCode: this.fb.control(''),
     activeStatus: this.fb.control(true),
-    restaurant: this.fb.control('')
+    restaurant: this.fb.control('', [Validators.required, Validators.minLength(1)])
   });
 
   constructor(private lunchSessionSvc: LunchSessionService, private dataSvc: DataService,
@@ -47,6 +47,7 @@ export class RoomComponent implements OnInit {
 
     this.lunchSessionSvc.findLunchSession(this.lunchSessionRequestForm.value)
       .then(lunchSessionResponse => {
+        console.info(lunchSessionResponse);
         this.dataSvc.lunchSessionResponse = lunchSessionResponse;
         this.lunchSessionResponseCheck(lunchSessionResponse);
         this.populateDataSource(lunchSessionResponse);
@@ -59,6 +60,7 @@ export class RoomComponent implements OnInit {
 
     this.lunchSessionSvc.updateLunchSessionRestaurants(this.lunchSessionRequestForm.value)
       .then(lunchSessionResponse => {
+        console.info(lunchSessionResponse);
         this.dataSvc.lunchSessionResponse = lunchSessionResponse;
         this.lunchSessionResponseCheck(lunchSessionResponse);
         this.populateDataSource(lunchSessionResponse);
@@ -72,6 +74,7 @@ export class RoomComponent implements OnInit {
 
     this.lunchSessionSvc.endLunchSession(this.lunchSessionRequestForm.value)
       .then(lunchSessionResponse => {
+        console.info(lunchSessionResponse);
         this.dataSvc.lunchSessionResponse = lunchSessionResponse;
         localStorage.removeItem(this.roomId);
         this.router.navigate(['/summary']);

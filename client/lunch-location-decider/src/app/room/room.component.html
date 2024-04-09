@@ -24,7 +24,8 @@
                 </mat-form-field>
                 <button mat-stroked-button
                     type="submit"
-                    color="primary">
+                    color="primary"
+                    [disabled]="lunchSessionRequestForm.invalid">
                     Submit
                 </button>
             </section>
