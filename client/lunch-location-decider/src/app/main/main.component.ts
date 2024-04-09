@@ -33,7 +33,7 @@ export class MainComponent{
       .then(lunchSessionResponse => {
         this.dataSvc.lunchSessionResponse = lunchSessionResponse;
 
-        localStorage.setItem(lunchSessionResponse.roomId, lunchSessionResponse.message ?? "");
+        localStorage.setItem(lunchSessionResponse.roomId ?? "", lunchSessionResponse.message ?? "");
         this.router.navigate(['/room']);
       })
       .catch(err => console.error(err.error));

@@ -37,6 +37,10 @@ describe('MainComponent', () => {
       ]
     })
     .compileComponents();
+
+    component = TestBed.inject(MainComponent);
+    // service = TestBed.inject(LunchSessionService);
+    // dataSvc = TestBed.inject(LunchSessionService);
     
     fixture = TestBed.createComponent(MainComponent);
     component = fixture.componentInstance;
