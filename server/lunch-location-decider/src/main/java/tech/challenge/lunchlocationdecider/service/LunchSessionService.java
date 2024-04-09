@@ -33,38 +33,15 @@ public class LunchSessionService {
 
     public LunchSessionResponseDto processLunchSessionRequestDto(LunchSessionRequestDto lunchSessionRequestDto, String action) {
         LunchSessionHelper.lunchSessionRequestDtoNullCheck(lunchSessionRequestDto);
-        String roomIdStr = lunchSessionRequestDto.getRoomId();
-        log.info("Room ID: " + roomIdStr);
+//        String roomIdStr = lunchSessionRequestDto.getRoomId();
+        log.info("Room ID: " + lunchSessionRequestDto.getRoomId());
 
         try {
             Optional<LunchSessionEntity> optLunchSessionEntity = lunchSessionRepository.findById(UUID.fromString(lunchSessionRequestDto.getRoomId()));
             if (optLunchSessionEntity.isPresent()) {
                 LunchSessionEntity lunchSessionEntity = optLunchSessionEntity.get();
-
-                String msg = "";
-                switch (action) {
-                    case "find": {
-                        msg = "Successfully retrieved Lunch Session for Room ID '" + roomIdStr + "'.";
-                        break;
-                    }
-                    case "update": {
-                        lunchSessionEntity.setRestaurants(updateRestaurants(lunchSessionEntity.getRestaurants(), lunchSessionRequestDto.getRestaurant()));
-                        lunchSessionRepository.saveAndFlush(lunchSessionEntity);
-                        msg = "Successfully updated Lunch Session restaurants for Room ID '" + roomIdStr + "'.";
-                        break;
-                    }
-                    case "end": {
-                        chooseRestaurantAndEndSession(lunchSessionEntity, lunchSessionRequestDto.isActiveStatus());
-                        msg = "Successfully ended Lunch Session for Room Code: '" + roomIdStr + "'.";
-                        break;
-                    }
-                    default: {
-                        break;
-                    }
-                }
-                log.info(msg);
-
                 boolean hasOwnerCode = lunchSessionRequestDto.getOwnerCode().equals(lunchSessionEntity.getOwnerCode());
+                String msg = executeMethodBasedOnAction(lunchSessionEntity, lunchSessionRequestDto, action);
                 return lunchSessionActiveStatusCheck(lunchSessionEntity, hasOwnerCode, msg);
             } else {
                 return lunchSessionRoomIdCheck(lunchSessionRequestDto);
@@ -77,13 +54,42 @@ public class LunchSessionService {
         }
     }
 
-    private String updateRestaurants(String restaurants, String restaurant) {
-        if (restaurants == null || restaurants.isEmpty()) {
-            restaurants = restaurant;
-        } else {
-            restaurants = String.join(",", restaurants, restaurant);
+    private String executeMethodBasedOnAction(LunchSessionEntity lunchSessionEntity, LunchSessionRequestDto lunchSessionRequestDto, String action) {
+        String roomId = lunchSessionRequestDto.getRoomId();
+        String msg = "";
+        switch (action) {
+            case "find": {
+                msg = "Successfully retrieved Lunch Session for Room ID '" + roomId + "'.";
+                break;
+            }
+            case "update": {
+                updateRestaurants(lunchSessionEntity, lunchSessionRequestDto.getRestaurant());
+                msg = "Successfully updated Lunch Session restaurants for Room ID '" + roomId + "'.";
+                break;
+            }
+            case "end": {
+                chooseRestaurantAndEndSession(lunchSessionEntity, lunchSessionRequestDto.isActiveStatus());
+                msg = "Successfully ended Lunch Session for Room Code: '" + roomId + "'.";
+                break;
+            }
+            default: {
+                break;
+            }
         }
-        return restaurants;
+        log.info(msg);
+        return msg;
+    }
+
+    private void updateRestaurants(LunchSessionEntity lunchSessionEntity, String restaurant) {
+        if (restaurant == null || restaurant.isEmpty()) {
+            return;
+        }
+        String restaurants = lunchSessionEntity.getRestaurants();
+        restaurants = (restaurants == null || restaurants.isEmpty())
+                ? restaurant
+                : String.join(",", restaurants, restaurant);
+        lunchSessionEntity.setRestaurants(restaurants);
+        lunchSessionRepository.saveAndFlush(lunchSessionEntity);
     }
 
     private void chooseRestaurantAndEndSession(LunchSessionEntity lunchSessionEntity, boolean activeStatus) {
