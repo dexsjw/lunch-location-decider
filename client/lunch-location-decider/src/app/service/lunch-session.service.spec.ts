@@ -56,6 +56,21 @@ describe('LunchSessionService', () => {
     req.flush(testRespHasOwnerCode);
   });
 
+  it('can test for 400 error for #newLunchSession', () => {
+    const errMsg = "deliberate <400> error";
+
+    httpClient.get<LunchSessionResponse>(BASE_URL + "/new").subscribe({
+      next: () => fail("should have failed with <400> error"),
+      error: (err: HttpErrorResponse) => {
+        expect(err.status).withContext("status").toEqual(400);
+        expect(err.message).withContext("message").toEqual(errMsg);
+      }
+    })
+
+    const req: TestRequest = httpTestingController.expectOne(BASE_URL + "/new");
+    req.flush(errMsg, {status: 400, statusText: "Bad Request"});
+  });
+
   it('#findLunchSession should return LunchSessionResponse', () => {
     httpClient.post<LunchSessionResponse>(BASE_URL + "/find", testReq)
       .subscribe(data => {
